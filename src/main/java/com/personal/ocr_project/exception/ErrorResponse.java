@@ -2,6 +2,17 @@ package com.personal.ocr_project.exception;
 
 import java.time.LocalDateTime;
 
-public record ErrorResponse(LocalDateTime timestamp, String message, String details, String errorCode) {
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+@AllArgsConstructor
+public class ErrorResponse {
+    private LocalDateTime timestamp;
+    private String message;
+    private String details;
+    private String errorCode;
 
 }

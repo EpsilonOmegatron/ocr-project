@@ -6,8 +6,4 @@ public class FileException extends RuntimeException {
         super(message);
     }
 
-    public FileException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
 }

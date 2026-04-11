@@ -22,7 +22,7 @@ public class TesseractOCRProvider implements OCRProviderService {
         try {
             return tesseract.doOCR(fileHandlerService.handleMultipartFile(file));
         } catch (Exception e) {
-            throw new OCRException("Tesseract Error", e);
+            throw new OCRException(e.getMessage());
         }
     }
 

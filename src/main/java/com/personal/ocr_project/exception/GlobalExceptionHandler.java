@@ -16,6 +16,11 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), exception.getMessage(),
                 webRequest.getDescription(false), "OCR_ERROR");
 
+        if (errorResponse.getMessage().contains("format")) {
+            errorResponse.setMessage("Invalid file format");
+            return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        }
+
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

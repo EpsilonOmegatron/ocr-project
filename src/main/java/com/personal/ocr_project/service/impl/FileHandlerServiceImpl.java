@@ -23,7 +23,7 @@ public class FileHandlerServiceImpl implements FileHandlerService {
             uploadedFile.transferTo(downloadedFile);
             return downloadedFile;
         } catch (Exception e) {
-            throw new FileException("File error", e);
+            throw new FileException(e.getMessage());
         }
     }
 
