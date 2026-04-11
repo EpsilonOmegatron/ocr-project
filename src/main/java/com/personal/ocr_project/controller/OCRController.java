@@ -3,7 +3,7 @@ package com.personal.ocr_project.controller;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.personal.ocr_project.service.impl.OCRService;
+import com.personal.ocr_project.service.OCRProviderService;
 
 import lombok.AllArgsConstructor;
 
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 @AllArgsConstructor
 public class OCRController {
 
-    private OCRService ocrService;
+    private OCRProviderService ocrService;
 
     @GetMapping("yo")
     public String test() {

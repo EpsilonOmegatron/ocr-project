@@ -31,4 +31,21 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    @ExceptionHandler(UserException.class)
+    public ResponseEntity<ErrorResponse> handleUserException(UserException exception, WebRequest webRequest) {
+        ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), exception.getMessage(),
+                webRequest.getDescription(false), "USER_OPERATION_ERROR");
+
+        if (errorResponse.getMessage().contains("constraint")) {
+            return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+        } else if (errorResponse.getMessage().contains("password")) {
+            return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+        } else if (errorResponse.getMessage().contains("null")) {
+            errorResponse.setMessage("Missing or erroneous field.");
+            return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }
