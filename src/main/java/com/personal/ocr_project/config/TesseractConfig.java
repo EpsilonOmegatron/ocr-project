@@ -19,8 +19,12 @@ public class TesseractConfig {
     @Bean
     ITesseract tesseract() {
         Tesseract t = new Tesseract();
+
         t.setDatapath(dataPath);
         t.setLanguage(language);
+        t.setOcrEngineMode(1);
+        t.setPageSegMode(6);
+
         return t;
     }
 
