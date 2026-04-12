@@ -3,7 +3,8 @@ package com.personal.ocr_project.controller;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.personal.ocr_project.service.OCRProviderService;
+import com.personal.ocr_project.enums.OCR;
+import com.personal.ocr_project.service.impl.OCREngineServiceImpl;
 
 import lombok.AllArgsConstructor;
 
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 @AllArgsConstructor
 public class OCRController {
 
-    private OCRProviderService ocrService;
+    private OCREngineServiceImpl ocrEngineService;
 
     @GetMapping("yo")
     public String test() {
@@ -26,8 +27,8 @@ public class OCRController {
     }
 
     @PostMapping("ocr")
-    public ResponseEntity<String> extractText(@RequestParam MultipartFile file) {
-        return ResponseEntity.ok(ocrService.extractTextFromImage(file));
+    public ResponseEntity<String> extractText(@RequestParam MultipartFile file, @RequestParam OCR engine) {
+        return ResponseEntity.ok(ocrEngineService.extractTextFromImage(file, engine));
     }
 
 }
