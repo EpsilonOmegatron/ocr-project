@@ -1,0 +1,19 @@
+{
+  "properties": [
+    {
+      "name": "tesseract.datapath",
+      "type": "java.lang.String",
+      "description": "Directory path for the tessdata training files."
+    },
+    {
+      "name": "tesseract.language",
+      "type": "java.lang.String",
+      "description": "The language setting for Tesseract."
+    },
+    {
+      "name": "downloads.directory",
+      "type": "java.lang.String",
+      "description": "The directory path in which uploaded files are placed into."
+    }
+  ]
+}

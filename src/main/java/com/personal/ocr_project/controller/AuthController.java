@@ -3,8 +3,9 @@ package com.personal.ocr_project.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.personal.ocr_project.dto.UserDto;
-import com.personal.ocr_project.service.UserService;
+import com.personal.ocr_project.dto.LoginDto;
+import com.personal.ocr_project.dto.RegisterDto;
+import com.personal.ocr_project.service.AuthService;
 
 import lombok.AllArgsConstructor;
 
@@ -16,19 +17,19 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("api/user")
-public class UserController {
+@RequestMapping("api/auth")
+public class AuthController {
 
-    private UserService userService;
+    private AuthService authService;
 
     @GetMapping("login")
-    public ResponseEntity<String> login(@RequestBody UserDto userDto) {
-        return ResponseEntity.ok(userService.login(userDto));
+    public ResponseEntity<String> login(@RequestBody LoginDto loginDto) {
+        return ResponseEntity.ok(authService.login(loginDto));
     }
 
     @PostMapping("register")
-    public ResponseEntity<String> register(@RequestBody UserDto userDto) {
-        return new ResponseEntity<String>(userService.register(userDto), HttpStatus.CREATED);
+    public ResponseEntity<String> register(@RequestBody RegisterDto registerDto) {
+        return new ResponseEntity<String>(authService.register(registerDto), HttpStatus.CREATED);
     }
 
 }
