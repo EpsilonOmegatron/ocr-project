@@ -4,6 +4,8 @@ import org.springframework.stereotype.Service;
 
 import com.personal.ocr_project.dto.UserDto;
 import com.personal.ocr_project.entity.User;
+import com.personal.ocr_project.exception.BadCredentialsException;
+import com.personal.ocr_project.exception.ResourceNotFoundException;
 import com.personal.ocr_project.exception.UserException;
 import com.personal.ocr_project.repository.UserRepository;
 import com.personal.ocr_project.service.UserService;
@@ -19,10 +21,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public String login(UserDto usersDto) {
         User user = userRepository.findByUsername(usersDto.getUsername())
-                .orElseThrow(() -> new UserException("User doesn't exist."));
+                .orElseThrow(() -> new ResourceNotFoundException("User doesn't exist."));
 
         if (!user.getPassword().equals(usersDto.getPassword())) {
-            throw new UserException("Incorrect password.");
+            throw new BadCredentialsException("Incorrect password.");
         }
 
         return "User logged-in successfully!";

@@ -9,6 +9,7 @@ import com.personal.ocr_project.service.OCRProviderService;
 
 import lombok.AllArgsConstructor;
 import net.sourceforge.tess4j.ITesseract;
+import net.sourceforge.tess4j.TesseractException;
 
 @Service
 @AllArgsConstructor
@@ -21,7 +22,7 @@ public class TesseractOCRProvider implements OCRProviderService {
     public String extractTextFromImage(MultipartFile file) {
         try {
             return tesseract.doOCR(fileHandlerService.handleMultipartFile(file));
-        } catch (Exception e) {
+        } catch (TesseractException e) {
             throw new OCRException(e.getMessage());
         }
     }

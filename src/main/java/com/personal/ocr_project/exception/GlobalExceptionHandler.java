@@ -8,44 +8,60 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
+import com.personal.ocr_project.enums.ErrorCode;
+
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+    // Error response builder to reduce code repetition
+    private ResponseEntity<ErrorResponse> buildResponse(HttpStatus status, String message, ErrorCode code,
+            WebRequest request) {
+
+        ErrorResponse error = new ErrorResponse(LocalDateTime.now(), message, request.getDescription(false), code);
+
+        return new ResponseEntity<>(error, status);
+    }
+
+    // Handler for generic exceptions
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> genericExceptionHandler(Exception exception, WebRequest webRequest) {
+        return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage(), ErrorCode.GENERIC_EXCEPTION,
+                webRequest);
+    }
+
+    // Handler for OCR exceptions
     @ExceptionHandler(OCRException.class)
     public ResponseEntity<ErrorResponse> handleOCRException(OCRException exception, WebRequest webRequest) {
-        ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), exception.getMessage(),
-                webRequest.getDescription(false), "OCR_ERROR");
-
-        if (errorResponse.getMessage().contains("format")) {
-            errorResponse.setMessage("Invalid file format");
-            return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
-        }
-
-        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage(), ErrorCode.OCR_ERROR, webRequest);
     }
 
+    // Handler for file exceptions
     @ExceptionHandler(FileException.class)
     public ResponseEntity<ErrorResponse> handleFileException(FileException exception, WebRequest webRequest) {
-        ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), exception.getMessage(),
-                webRequest.getDescription(false), "FILE_OPERATION_ERROR");
-
-        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        return buildResponse(HttpStatus.BAD_REQUEST, exception.getMessage(), ErrorCode.FILE_OPERATION_ERROR,
+                webRequest);
     }
 
+    // Handler for generic user exceptions
     @ExceptionHandler(UserException.class)
-    public ResponseEntity<ErrorResponse> handleUserException(UserException exception, WebRequest webRequest) {
-        ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), exception.getMessage(),
-                webRequest.getDescription(false), "USER_OPERATION_ERROR");
+    public ResponseEntity<ErrorResponse> handleGenericUserException(UserException exception, WebRequest webRequest) {
+        return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage(), ErrorCode.USER_OPERATION_ERROR,
+                webRequest);
+    }
 
-        if (errorResponse.getMessage().contains("constraint")) {
-            return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
-        } else if (errorResponse.getMessage().contains("password")) {
-            return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
-        } else if (errorResponse.getMessage().contains("null")) {
-            errorResponse.setMessage("Missing or erroneous field.");
-            return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
-        }
+    // Handler for bad credentials
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ErrorResponse> handleBadCredentialsException(BadCredentialsException exception,
+            WebRequest webRequest) {
+        return buildResponse(HttpStatus.UNAUTHORIZED, exception.getMessage(), ErrorCode.BAD_CREDENTIALS,
+                webRequest);
+    }
 
-        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    // Handler for resource not found
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleResourceNotFoundException(ResourceNotFoundException exception,
+            WebRequest webRequest) {
+        return buildResponse(HttpStatus.NOT_FOUND, exception.getMessage(), ErrorCode.RESOURCE_NOT_FOUND,
+                webRequest);
     }
 }

@@ -10,9 +10,11 @@ import net.sourceforge.tess4j.Tesseract;
 @Configuration
 public class TesseractConfig {
 
+    // Get tessdata file DIRECTORY from application.properties
     @Value("${tesseract.datapath}")
     private String dataPath;
 
+    // Same for the language option
     @Value("${tesseract.language}")
     private String language;
 
