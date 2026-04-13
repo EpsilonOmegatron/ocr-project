@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -22,12 +23,14 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error, status);
     }
 
-    // Handler for generic exceptions
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> genericExceptionHandler(Exception exception, WebRequest webRequest) {
-        return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage(), ErrorCode.GENERIC_EXCEPTION,
-                webRequest);
-    }
+    // // Handler for generic exceptions
+    // @ExceptionHandler(Exception.class)
+    // public ResponseEntity<ErrorResponse> genericExceptionHandler(Exception
+    // exception, WebRequest webRequest) {
+    // return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR,
+    // exception.getMessage(), ErrorCode.GENERIC_EXCEPTION,
+    // webRequest);
+    // }
 
     // Handler for OCR exceptions
     @ExceptionHandler(OCRException.class)
@@ -39,13 +42,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(FileException.class)
     public ResponseEntity<ErrorResponse> handleFileException(FileException exception, WebRequest webRequest) {
         return buildResponse(HttpStatus.BAD_REQUEST, exception.getMessage(), ErrorCode.FILE_OPERATION_ERROR,
-                webRequest);
-    }
-
-    // Handler for generic user exceptions
-    @ExceptionHandler(UserException.class)
-    public ResponseEntity<ErrorResponse> handleGenericUserException(UserException exception, WebRequest webRequest) {
-        return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage(), ErrorCode.USER_OPERATION_ERROR,
                 webRequest);
     }
 
@@ -62,6 +58,22 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleResourceNotFoundException(ResourceNotFoundException exception,
             WebRequest webRequest) {
         return buildResponse(HttpStatus.NOT_FOUND, exception.getMessage(), ErrorCode.RESOURCE_NOT_FOUND,
+                webRequest);
+    }
+
+    // Handler for username not found
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleUsernameNotFoundException(UsernameNotFoundException exception,
+            WebRequest webRequest) {
+        return buildResponse(HttpStatus.NOT_FOUND, exception.getMessage(), ErrorCode.RESOURCE_NOT_FOUND,
+                webRequest);
+    }
+
+    // Handler for username not found
+    @ExceptionHandler(UsernameAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handleUsernameAlreadyExists(UsernameAlreadyExistsException exception,
+            WebRequest webRequest) {
+        return buildResponse(HttpStatus.BAD_REQUEST, exception.getMessage(), ErrorCode.UNIQUENESS_VIOLATION,
                 webRequest);
     }
 }

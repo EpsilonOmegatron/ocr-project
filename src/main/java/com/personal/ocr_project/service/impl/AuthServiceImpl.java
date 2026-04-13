@@ -15,7 +15,8 @@ import com.personal.ocr_project.dto.LoginDto;
 import com.personal.ocr_project.dto.RegisterDto;
 import com.personal.ocr_project.entity.Role;
 import com.personal.ocr_project.entity.User;
-import com.personal.ocr_project.exception.UserException;
+import com.personal.ocr_project.exception.ResourceNotFoundException;
+import com.personal.ocr_project.exception.UsernameAlreadyExistsException;
 import com.personal.ocr_project.repository.UserRepository;
 import com.personal.ocr_project.service.AuthService;
 
@@ -41,22 +42,24 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public String register(RegisterDto registerDto) {
-        try {
-            User user = new User();
-            user.setUsername(registerDto.getUsername());
-            user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
-            user.setName(registerDto.getName());
 
-            Set<Role> roles = new HashSet<>();
-            for (String role : registerDto.getRoles()) {
-                roles.add(roleRepository.findByName(role).orElseThrow(() -> new UserException("Role doesn't exist.")));
-            }
-            user.setRoles(roles);
-
-            userRepository.save(user);
-        } catch (Exception e) {
-            throw new UserException(e.getMessage());
+        if (userRepository.existsByUsername(registerDto.getUsername())) {
+            throw new UsernameAlreadyExistsException("Username already exists.");
         }
+
+        User user = new User();
+        user.setUsername(registerDto.getUsername());
+        user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
+        user.setName(registerDto.getName());
+
+        Set<Role> roles = new HashSet<>();
+        for (String role : registerDto.getRoles()) {
+            roles.add(roleRepository.findByName(role)
+                    .orElseThrow(() -> new ResourceNotFoundException("Role doesn't exist.")));
+        }
+        user.setRoles(roles);
+
+        userRepository.save(user);
 
         return "User registered successfully!";
     }

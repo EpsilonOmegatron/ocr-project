@@ -20,19 +20,20 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private UserRepository userRepository;
+        private UserRepository userRepository;
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Username not found."));
+        @Override
+        public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+                User user = userRepository.findByUsername(username)
+                                .orElseThrow(() -> new UsernameNotFoundException("Username not found."));
 
-        Set<Role> roles = user.getRoles();
-        Set<GrantedAuthority> authorities = roles.stream().map((role) -> new SimpleGrantedAuthority(role.toString()))
-                .collect(Collectors.toSet());
+                Set<Role> roles = user.getRoles();
+                Set<GrantedAuthority> authorities = roles.stream()
+                                .map((role) -> new SimpleGrantedAuthority(role.toString()))
+                                .collect(Collectors.toSet());
 
-        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
-                authorities);
-    }
+                return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
+                                authorities);
+        }
 
 }

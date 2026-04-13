@@ -12,6 +12,8 @@ import java.util.stream.Collectors;
 @Component
 public class OCREngineFactory {
 
+    // Define a map of OCR enum and link them to
+    // different service implementations to apply startegy pattern
     private final Map<OCR, OCREngineService> engines;
 
     public OCREngineFactory(List<OCREngineService> services) {
@@ -21,6 +23,8 @@ public class OCREngineFactory {
                         s -> s));
     }
 
+    // Pick and inject the service depending on
+    // the decided engine type
     public OCREngineService getEngine(OCR type) {
         OCREngineService service = engines.get(type);
 
