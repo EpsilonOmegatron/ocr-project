@@ -29,7 +29,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
                 Set<Role> roles = user.getRoles();
                 Set<GrantedAuthority> authorities = roles.stream()
-                                .map((role) -> new SimpleGrantedAuthority(role.toString()))
+                                .map((role) -> new SimpleGrantedAuthority(role.getName()))
                                 .collect(Collectors.toSet());
 
                 return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
