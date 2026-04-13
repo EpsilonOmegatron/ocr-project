@@ -18,6 +18,7 @@ import com.personal.ocr_project.entity.User;
 import com.personal.ocr_project.exception.ResourceNotFoundException;
 import com.personal.ocr_project.exception.UsernameAlreadyExistsException;
 import com.personal.ocr_project.repository.UserRepository;
+import com.personal.ocr_project.security.JwtTokenProvider;
 import com.personal.ocr_project.service.AuthService;
 
 import lombok.AllArgsConstructor;
@@ -30,6 +31,7 @@ public class AuthServiceImpl implements AuthService {
     private UserRepository userRepository;
     private PasswordEncoder passwordEncoder;
     private AuthenticationManager authenticationManager;
+    private JwtTokenProvider jwtTokenProvider;
 
     @Override
     public String login(LoginDto loginDto) {
@@ -37,7 +39,8 @@ public class AuthServiceImpl implements AuthService {
                 .authenticate(new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        return "User logged-in successfully!";
+
+        return jwtTokenProvider.generateToken(authentication);
     }
 
     @Override

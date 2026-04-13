@@ -10,9 +10,11 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.personal.ocr_project.exception.CustomAccessDeniedHandler;
-import com.personal.ocr_project.exception.CustomAuthenticationEntryPoint;
+import com.personal.ocr_project.security.JwtAuthenticationEntryPoint;
+import com.personal.ocr_project.security.JwtAuthenticationFilter;
 
 import lombok.AllArgsConstructor;
 
@@ -22,6 +24,7 @@ import lombok.AllArgsConstructor;
 public class SecurityConfig {
 
     private UserDetailsService userDetailsService;
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
 
     // Password Encoder bean to decide on encoding strategy
     @Bean
@@ -50,7 +53,10 @@ public class SecurityConfig {
 
         // Options for authentication
         http.formLogin(form -> form.disable());
-        http.httpBasic(basicAuth -> basicAuth.authenticationEntryPoint(new CustomAuthenticationEntryPoint()));
+        http.httpBasic(basicAuth -> basicAuth.authenticationEntryPoint(new JwtAuthenticationEntryPoint()));
+
+        // Use the jwt authentication filter before the username password auth filter
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         // Exception handling options
         http.exceptionHandling((exception) -> exception.accessDeniedHandler(new CustomAccessDeniedHandler()));
