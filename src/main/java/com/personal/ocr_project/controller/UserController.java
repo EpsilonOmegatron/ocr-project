@@ -2,7 +2,7 @@ package com.personal.ocr_project.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 
-import com.personal.ocr_project.entity.User;
+import com.personal.ocr_project.dto.UserDto;
 import com.personal.ocr_project.service.UserService;
 
 import lombok.AllArgsConstructor;
@@ -29,7 +29,7 @@ public class UserController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
-    public ResponseEntity<List<User>> getUsers() {
+    public ResponseEntity<List<UserDto>> getUsers() {
         return ResponseEntity.ok(userService.getUsers());
     }
 
