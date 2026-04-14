@@ -44,6 +44,7 @@ public class JwtTokenProvider {
         // Build the JWT token
         return Jwts.builder()
                 .subject(username) // "sub" claim → identifies the user
+                
                 .issuedAt(currentDate) // "iat" claim → token creation time
                 .expiration(expireDate) // "exp" claim → token expiration time
                 .signWith(key()) // Sign token with secret key
