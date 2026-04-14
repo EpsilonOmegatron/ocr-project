@@ -12,7 +12,9 @@ import org.springframework.stereotype.Component;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 public class JwtTokenProvider {
 
@@ -41,10 +43,12 @@ public class JwtTokenProvider {
         // Expiration timestamp
         Date expireDate = new Date(currentDate.getTime() + jwtExpiryInMillisecond);
 
+        log.info("Building JWT Token - User: username={}, Current Date: date={}, Expiry Date: expiry={}", username,
+                currentDate, expireDate);
+
         // Build the JWT token
         return Jwts.builder()
                 .subject(username) // "sub" claim → identifies the user
-                
                 .issuedAt(currentDate) // "iat" claim → token creation time
                 .expiration(expireDate) // "exp" claim → token expiration time
                 .signWith(key()) // Sign token with secret key
@@ -53,16 +57,18 @@ public class JwtTokenProvider {
 
     // Extract username (subject) from JWT token
     public String getUsernameFromToken(String token) {
+        log.info("Fetching username from token...");
         return Jwts.parser()
                 .verifyWith((SecretKey) key()) // Verify signature using secret key
                 .build()
                 .parseSignedClaims(token) // Parse and validate token
-                .getPayload() // Get claims (payload)
+                .getPayload() // Get claims (payload, information I chose to store)
                 .getSubject(); // Extract "sub" (username)
     }
 
     // Validate JWT token (signature + expiration)
     public boolean validateToken(String token) {
+        log.info("Validating Token...");
         Jwts.parser()
                 .verifyWith((SecretKey) key()) // Verify signature
                 .build()

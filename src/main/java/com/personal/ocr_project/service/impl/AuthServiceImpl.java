@@ -22,7 +22,9 @@ import com.personal.ocr_project.security.JwtTokenProvider;
 import com.personal.ocr_project.service.AuthService;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class AuthServiceImpl implements AuthService {
@@ -35,21 +37,29 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public String login(LoginDto loginDto) {
+        // Validate the username and password sent to log in, set them as an
+        // authentication object in security context
+        log.info("Recieved credentials from request, validating..");
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
+        log.info("User authenticated from database. Generating JWT token now..");
         return jwtTokenProvider.generateToken(authentication);
     }
 
     @Override
     public String register(RegisterDto registerDto) {
 
+        // User exists check
+        log.info("Checking if username: user={} exists or not..", registerDto.getUsername());
         if (userRepository.existsByUsername(registerDto.getUsername())) {
             throw new UsernameAlreadyExistsException("Username already exists.");
         }
 
+        // Map RegisterDto to User
+        log.info("Registering user with username: user={} to the database..", registerDto.getUsername());
         User user = new User();
         user.setUsername(registerDto.getUsername());
         user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
@@ -62,6 +72,7 @@ public class AuthServiceImpl implements AuthService {
         }
         user.setRoles(roles);
 
+        // Finally register the user to the database
         userRepository.save(user);
 
         return "User registered successfully!";

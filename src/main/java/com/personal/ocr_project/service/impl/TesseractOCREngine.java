@@ -10,9 +10,11 @@ import com.personal.ocr_project.service.FileHandlerService;
 import com.personal.ocr_project.service.OCREngineService;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.sourceforge.tess4j.ITesseract;
 import net.sourceforge.tess4j.TesseractException;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 @Primary
@@ -24,6 +26,7 @@ public class TesseractOCREngine implements OCREngineService {
     @Override
     public String extractTextFromImage(MultipartFile file) {
         try {
+            log.info("Running tesseract OCR..");
             return tesseract.doOCR(fileHandlerService.handleMultipartFile(file));
         } catch (TesseractException e) {
             throw new OCRException(e.getMessage());

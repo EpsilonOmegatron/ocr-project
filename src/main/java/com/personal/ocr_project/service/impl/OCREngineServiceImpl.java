@@ -20,21 +20,26 @@ public class OCREngineServiceImpl {
     private UserRepository userRepository;
     private ScanHistoryRepository scanHistoryRepository;
 
-    public String extractTextFromImage(MultipartFile file, OCR engine) {
-        return factory.getEngine(engine).extractTextFromImage(file);
-    }
+    // public String extractTextFromImage(MultipartFile file, OCR engine) {
+    // return factory.getEngine(engine).extractTextFromImage(file);
+    // }
 
     public String extractTextFromImageAndSave(MultipartFile file, OCR engine, String username) {
+        // Fetch OCR engine from request, send to the factory to fetch the corresponding
+        // extractTextFromImage function
         String text = factory.getEngine(engine).extractTextFromImage(file);
 
+        // User existence check
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new ResourceNotFoundException("Username doesn't exist."));
 
+        // Set and save scan history
         ScanHistory scan = new ScanHistory();
         scan.setScannedText(text);
         scan.setUser(user);
 
         scanHistoryRepository.save(scan);
-        return text;
+
+        return "OCR Scan successful! Saved to database.";
     }
 }

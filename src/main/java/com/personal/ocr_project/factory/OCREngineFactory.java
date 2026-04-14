@@ -5,10 +5,13 @@ import org.springframework.stereotype.Component;
 import com.personal.ocr_project.enums.OCR;
 import com.personal.ocr_project.service.OCREngineService;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Component
 public class OCREngineFactory {
 
@@ -26,6 +29,7 @@ public class OCREngineFactory {
     // Pick and inject the service depending on
     // the decided engine type
     public OCREngineService getEngine(OCR type) {
+        log.info("Generating engine service using engine type: engine={}", type);
         OCREngineService service = engines.get(type);
 
         if (service == null) {

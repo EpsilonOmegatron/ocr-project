@@ -1,12 +1,10 @@
 package com.personal.ocr_project.service.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
 import com.personal.ocr_project.dto.UserDto;
-import com.personal.ocr_project.entity.User;
 import com.personal.ocr_project.mapper.UserMapper;
 import com.personal.ocr_project.repository.UserRepository;
 import com.personal.ocr_project.service.UserService;

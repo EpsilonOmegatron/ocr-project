@@ -16,7 +16,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 @AllArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -36,8 +38,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             // Get username from token
             String username = jwtTokenProvider.getUsernameFromToken(token);
+            log.info("Extracted username = username={}", username);
 
             // Load the user object from the database using username
+            log.info("Fetching userdetails using extracted username..");
             UserDetails userdetails = userDetailsService.loadUserByUsername(username);
 
             // User details to the spring security for authentication
@@ -48,6 +52,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
             // Set authentication for the security context
+            log.info("Setting security context using JWT token..");
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
 
@@ -57,9 +62,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private String getTokenFromRequest(HttpServletRequest request) {
 
         // "Bearer 'token'"
+        log.info("Fetching token from request..");
         String token = request.getHeader("Authorization");
 
         if (StringUtils.hasText(token) && token.startsWith("Bearer ")) {
+            log.info("Token found in authorization header. Extracting..");
             return token.substring(7, token.length());
         }
 
